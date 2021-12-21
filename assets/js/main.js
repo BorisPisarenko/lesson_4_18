@@ -127,9 +127,25 @@ console.log(getWeekDay('2019-07-27')); // суббота
  * День нужно возвратить в европейской нумерации, т.е. понедельник имеет номер 1, вторник номер 2, …, воскресенье – номер 7.
  */
 
-// console.log(getLocalDay('2019-07-16')); // 2
-// console.log(getLocalDay('2019-07-25')); // 4
-// console.log(getLocalDay('2019-07-27')); // 6
+let getLocalDay = (d) => {
+    const date = new Date(d);
+    let day = date.getDay();
+
+    if (day === 0) day = 7;
+
+    return day;
+};
+
+console.log(getLocalDay('2018-01-10'));
+console.log(getLocalDay('2019-07-21'));
+console.log(getLocalDay('2019-07-22'));
+console.log(getLocalDay('2019-07-23'));
+console.log(getLocalDay('2019-07-24'));
+console.log(getLocalDay('2019-07-25'));
+console.log(getLocalDay('2019-07-26'));
+console.log(getLocalDay('2019-07-27'));
+console.log(getLocalDay('2019-07-28'));
+console.log(getLocalDay('2019-07-29'));
 
 /*
  * #5

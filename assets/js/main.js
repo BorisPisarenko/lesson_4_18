@@ -155,9 +155,18 @@ console.log(getLocalDay('2019-07-29'));
  * Дата принимается в формате YYYY-MM-DD, возвращается DD.MM.YYYY.
  */
 
-// console.log(getDateAgo('2019-01-29', 1)); // 28.01.2019
-// console.log(getDateAgo('2019-01-29', 2)); // 27.01.2019
-// console.log(getDateAgo('2019-01-29', 365)); // 29.01.2018
+let getDateAgo = (d, days) => {
+    const date = new Date(d);
+
+    date.setDate(date.getDate() - days);
+
+    return date.toLocaleString().replace(/(\d.*),\s+(\d.*)/gu, '$1');
+};
+
+console.log(getDateAgo('2019-01-29', 1));
+console.log(getDateAgo('2019-01-29', 2));
+console.log(getDateAgo('2019-01-29', 365));
+
 
 /*
  * #6
@@ -173,16 +182,44 @@ console.log(getLocalDay('2019-07-29'));
  * Объекты и их методы, созданные прототипом должны полностью соответствовать объектам из прошлого задания.
  */
 
-// let car = new Car(2000, 'Lacetti', 'Chevrolet', 2010);
-// let car2 = new Car(5000, 'FX50 AWD', 'Infinite', 2019);
-// console.log(car.info()); // chevrolet Lacetti, 2010cc, year 2010, used
-// car.used = 'new';
-// console.log(car.info()); // chevrolet Lacetti, 2019cc, year 2019, new -- год изменен
-// car.used = 'used';
-// console.log(car.info()); // chevrolet Lacetti, 2019cc, year 2019, new -- изменения не выполняются
-// console.log(car2.info()); // infinite FX50 AWD, 2019cc, year 2019, new
-// car.used = 'used';
-// console.log(car2.info()); // infinite FX50 AWD, 2019cc, year 2019, new -- изменения не выполняются
+let Car = function (engine, model, name, year) {
+    this.engine = engine;
+    this.model = model;
+    this.name = name;
+    this.year = year;
+};
+
+Object.defineProperties(Car.prototype, {
+    used: {
+        get() {
+            const yearNow = new Date().getFullYear();
+
+            return yearNow - this.year > 1 ? 'used' : 'new';
+        },
+        set(value) {
+            const yearNow = new Date().getFullYear();
+
+            if (value === 'new' && this.year < yearNow) this.year = yearNow;
+        }
+    }
+});
+
+Car.prototype.info = function () {
+    return `${this.name} ${this.model}, ${this.engine}cc, year ${this.year}, ${this.used}`;
+};
+
+let car = new Car(2000, 'Lacetti', 'Chevrolet', 2010);
+let car2 = new Car(5000, 'FX50 AWD', 'Infinite', 2019);
+
+console.log(car.info());
+car.used = 'new';
+console.log(car.info());
+car.used = 'used';
+console.log(car.info());
+console.log(car2.info());
+car.used = 'used';
+console.log(car2.info());
+
 
 /*
  * #7
@@ -193,23 +230,30 @@ console.log(getLocalDay('2019-07-29'));
  * Если в качестве параметра передается что-либо кроме функции, тестирование не выполняется, возвращается 0.
  */
 
-// данная функция необходима для корректного тестирования кода
-// function test1() {
-//   let str = myLongStr;
-//   while (str.indexOf('o') !== -1) str = str.replace('o', '');
-//   while (str.indexOf('a') !== -1) str = str.replace('a', '');
-//   while (str.indexOf('e') !== -1) str = str.replace('e', '');
-//   while (str.indexOf('u') !== -1) str = str.replace('u', '');
-//   while (str.indexOf('i') !== -1) str = str.replace('i', '');
-// }
+let testPerformance = (iterations, func) => {
+    let time = Date.now();
 
-// данная функция необходима для корректного тестирования кода
-// function test2() {
-//   const reg = new RegExp('[oaeui]', 'gui');
+    if (typeof func === 'function') for (let i = iterations; i--;) func();
 
-//   myLongStr.replace(reg, '');
-// }
+    return Date.now() - time;
+};
 
-// console.log(testPerformance(100, test1)); // time
-// console.log(testPerformance(100, test2)); // time
-// console.log(testPerformance(100, 12345)); // 0
+function test1() {
+    let str = myLongStr;
+
+    while (str.indexOf('o') !== -1) str = str.replace('o', '');
+    while (str.indexOf('a') !== -1) str = str.replace('a', '');
+    while (str.indexOf('e') !== -1) str = str.replace('e', '');
+    while (str.indexOf('u') !== -1) str = str.replace('u', '');
+    while (str.indexOf('i') !== -1) str = str.replace('i', '');
+}
+
+function test2() {
+    const reg = new RegExp('[oaeui]', 'gui');
+
+    myLongStr.replace(reg, '');
+}
+
+console.log(testPerformance(100, test1));
+console.log(testPerformance(100, test2));
+console.log(testPerformance(100, 12345));
